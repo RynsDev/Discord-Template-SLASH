@@ -19,11 +19,15 @@ Client.slashCommands = new Discord.Collection();
 global.client = Client
 let fs = require('fs');
 function registerSlashCommands() {
-    let slashCommandsDir = fs.readdirSync('./slashCommands')
-    for (let i = 0; i < slashCommandsDir.length; i++) {
-        let slashCommand = require('./slashCommands/' + slashCommandsDir[i])
-        Client.commands.set(slashCommand.name, slashCommand)
-    }
+    let slashCommandsDirs = fs.readdirSync('./slashCommands')
+    slashCommandsDirs.forEach(slashCommandsDir => {
+        let slashCommands = fs.readdirSync(`./slashCommands/${slashCommandsDir}`)
+        slashCommands.forEach(slashCommand => {
+            let slashCommandFile = require(`./slashCommands/${slashCommandsDir}/${slashCommand}`)
+            Client.slashCommands.set(slashCommandFile.data.name, slashCommandFile)
+            console.log("Registered slash command: " + slashCommandFile.data.name)
+        })
+    })
 }
 
 function registerDiscordEvents() {
